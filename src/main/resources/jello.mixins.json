@@ -6,6 +6,7 @@
   "mixins": [
     "common.BlockMixin",
     "common.LivingEntityMixin",
+    "common.LivingEntityTickEventMixin",
     "common.MilkBucketItemMixin",
     "common.PistonBlockMixin",
     "common.accessors.PistonHandlerAccessor",

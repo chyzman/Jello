@@ -1,13 +1,14 @@
 package com.dragon.jello.mixin.mixins.common;
 
 import com.dragon.jello.common.effects.JelloStatusEffectsRegistry;
-import com.dragon.jello.mixin.ducks.BounceEffectMethod;
+import com.dragon.jello.mixin.ducks.InAirTracking;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,6 +24,7 @@ public class BlockMixin {
         if(!entity.bypassesLandingEffects()) {
             if (entity instanceof LivingEntity livingEntity && livingEntity.hasStatusEffect(JelloStatusEffectsRegistry.BOUNCE)) {
                 entity.handleFallDamage(fallDistance, 0.0F, DamageSource.FALL);
+
                 ci.cancel();
             }
         }
@@ -32,7 +34,10 @@ public class BlockMixin {
     private void bounceEffectOnEntityLand(BlockView world, Entity entity, CallbackInfo ci){
         if(!entity.bypassesLandingEffects()) {
             if (entity instanceof LivingEntity livingEntity && livingEntity.hasStatusEffect(JelloStatusEffectsRegistry.BOUNCE)) {
-                BounceEffectMethod.bounce(livingEntity);
+                Vec3d vec3d = livingEntity.getVelocity();
+                float f = 0.95F;
+
+                livingEntity.setVelocity(vec3d.x * f, vec3d.y * -f, vec3d.z * f);
                 ci.cancel();
             }
         }

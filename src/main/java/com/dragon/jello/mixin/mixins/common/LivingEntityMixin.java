@@ -1,19 +1,28 @@
 package com.dragon.jello.mixin.mixins.common;
 
 import com.dragon.jello.common.Util.DataConstants;
+import com.dragon.jello.common.effects.JelloStatusEffectsRegistry;
+import com.dragon.jello.lib.events.LivingEntityTickEvents;
 import com.dragon.jello.mixin.ducks.DyeableEntity;
+import com.dragon.jello.mixin.ducks.InAirTracking;
 import com.dragon.jello.mixin.ducks.RainbowEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.Vec3d;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.dragon.jello.common.Util.DataConstants.*;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin implements DyeableEntity, RainbowEntity {
+public abstract class LivingEntityMixin implements DyeableEntity, RainbowEntity, InAirTracking {
+
+    private boolean isInAir = false;
 
     private static final TrackedData<Integer> DYE_COLOR = DataConstants.DYE_COLOR;
     private static final TrackedData<Byte> RAINBOW_MODE = DataConstants.RAINBOW_MODE;
@@ -114,4 +123,63 @@ public abstract class LivingEntityMixin implements DyeableEntity, RainbowEntity 
     }
 
     //---------------------------------------------------------------------------------------------------//
+
+    private int timeLeftBeforeNextJump = 0;
+
+    @Unique
+    private static final Logger BOUNCE_LOGGER = LogManager.getLogger("BOUNCE");
+
+    @Inject(method = "jump", at = @At(value = "HEAD"), cancellable = true)
+    private void setJumpVariable(CallbackInfo ci){
+        LivingEntity livingEntity = (LivingEntity) (Object)this;
+        //isInAir = true;
+
+        Vec3d rotationVector = livingEntity.getRotationVector();
+
+        if(rotationVector.getY() < 0){
+            return;
+        }
+
+        if (livingEntity.hasStatusEffect(JelloStatusEffectsRegistry.BOUNCE) && !isInAir) {
+            float f = 3.2f;
+
+
+            BOUNCE_LOGGER.info("1: Player's Rotation Vec: [" + rotationVector + "]");
+            BOUNCE_LOGGER.info("2: Player's Velocity: [" + livingEntity.getVelocity() + "]");
+
+            if(Math.abs(rotationVector.y) < 0.3){
+                rotationVector = new Vec3d(rotationVector.x, 0.45F, rotationVector.z);
+            }
+
+            Vec3d vec = livingEntity.getVelocity().add(rotationVector);
+
+            livingEntity.addVelocity(vec.x * f, vec.y * f / 3f, vec.z * f);
+
+            setIsInAir(true);
+            timeLeftBeforeNextJump = 60;
+
+            livingEntity.velocityDirty = true;
+
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "tick", at = @At(value = "HEAD"))
+    private void manageTimeLeftBetweenJumps(CallbackInfo ci){
+        if(timeLeftBeforeNextJump <= 0){
+            setIsInAir(false);
+        }else{
+            timeLeftBeforeNextJump--;
+        }
+    }
+
+    @Unique
+    public boolean isInAir(){
+        return isInAir;
+    }
+
+    @Unique
+    public void setIsInAir(boolean jumped){
+        this.isInAir = jumped;
+    }
 }
