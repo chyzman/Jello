@@ -4,8 +4,8 @@
   "colors": [
     {
       "hexValue": "000000",
-      "colorName": "Black",
-      "identifierSafeName": "black"
+      "colorName": "True Black",
+      "identifierSafeName": "true_black"
     },
     {
       "hexValue": "000080",
@@ -19,8 +19,8 @@
     },
     {
       "hexValue": "0000FF",
-      "colorName": "Blue",
-      "identifierSafeName": "blue"
+      "colorName": "True Blue",
+      "identifierSafeName": "true_blue"
     },
     {
       "hexValue": "000741",
@@ -179,7 +179,7 @@
     },
     {
       "hexValue": "00FF00",
-      "colorName": "Green",
+      "colorName": "True Green",
       "identifierSafeName": "green"
     },
     {
@@ -189,8 +189,8 @@
     },
     {
       "hexValue": "00FFFF",
-      "colorName": "Cyan / Aqua",
-      "identifierSafeName": "cyan_/_aqua"
+      "colorName": "True Cyan",
+      "identifierSafeName": "true_cyan"
     },
     {
       "hexValue": "010D1A",
@@ -7174,7 +7174,7 @@
     },
     {
       "hexValue": "FF0000",
-      "colorName": "Red",
+      "colorName": "True Red",
       "identifierSafeName": "red"
     },
     {
@@ -7804,8 +7804,8 @@
     },
     {
       "hexValue": "FFFF00",
-      "colorName": "Yellow",
-      "identifierSafeName": "yellow"
+      "colorName": "True Yellow",
+      "identifierSafeName": "true_yellow"
     },
     {
       "hexValue": "FFFF66",
@@ -7829,8 +7829,8 @@
     },
     {
       "hexValue": "FFFFFF",
-      "colorName": "White",
-      "identifierSafeName": "white"
+      "colorName": "True White",
+      "identifierSafeName": "true_white"
     },
     {
       "hexValue": "0048BA",
